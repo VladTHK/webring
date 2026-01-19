@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: webring-db
+    environment:
+      POSTGRES_USER: webring
+      POSTGRES_PASSWORD: webring
+      POSTGRES_DB: webring
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    image: golang:1.25
+    container_name: webring-app
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    command: go run cmd/server/main.go
+
+volumes:
+  pgdata:
